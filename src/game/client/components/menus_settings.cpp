@@ -51,7 +51,8 @@ void CMenus::RenderSettings(CUIRect MainView)
 		Localize("Sound"),
 		Localize("DDNet"),
 		Localize("Assets"),
-		Localize("Credits")};
+		Localize("Credits"),
+		Localize("wartov")};
 	static CButtonContainer s_aTabButtons[SETTINGS_LENGTH];
 
 	for(int i = 0; i < SETTINGS_LENGTH; i++)
@@ -120,6 +121,11 @@ void CMenus::RenderSettings(CUIRect MainView)
 		GameClient()->m_MenuBackground.ChangePosition(CMenuBackground::POS_SETTINGS_CREDITS);
 		RenderSettingsCredits(MainView);
 	}
+	else if(g_Config.m_UiSettingsPage == SETTINGS_WARTOV)
+	{
+		GameClient()->m_MenuBackground.ChangePosition(CMenuBackground::POS_SETTINGS_GENERAL);
+		RenderSettingsWartov(MainView);
+	}
 	else
 	{
 		dbg_assert_failed("ui_settings_page invalid");
@@ -156,6 +162,61 @@ void CMenus::RenderSettings(CUIRect MainView)
 	}
 }
 
+void CMenus::RenderSettingsWartov(CUIRect MainView)
+{
+	CUIRect Header, HeaderContent, Accent, Title, Subtitle, SectionTitle;
+	MainView.HSplitTop(72.0f, &Header, &MainView);
+	Header.Draw(ColorRGBA(0.08f, 0.10f, 0.16f, 0.96f), IGraphics::CORNER_ALL, 10.0f);
+	Header.VSplitLeft(5.0f, &Accent, &HeaderContent);
+	Accent.Draw(ColorRGBA(0.20f, 0.78f, 0.70f, 1.0f), IGraphics::CORNER_ALL, 2.5f);
+	HeaderContent.Margin(14.0f, &HeaderContent);
+	HeaderContent.HSplitTop(26.0f, &Title, &Subtitle);
+	TextRender()->TextColor(0.94f, 0.98f, 1.0f, 1.0f);
+	Ui()->DoLabel(&Title, Localize("wartov"), 22.0f, TEXTALIGN_ML);
+	TextRender()->TextColor(0.64f, 0.75f, 0.83f, 1.0f);
+	Ui()->DoLabel(&Subtitle, Localize("A personal space for your DDNet setup"), 11.0f, TEXTALIGN_ML);
+	TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	MainView.HSplitTop(8.0f, nullptr, &MainView);
+	MainView.HSplitTop(20.0f, &SectionTitle, &MainView);
+	Ui()->DoLabel(&SectionTitle, Localize("Quick access"), 16.0f, TEXTALIGN_ML);
+	MainView.HSplitTop(6.0f, nullptr, &MainView);
+
+	static CButtonContainer s_aQuickLinks[3];
+	const int aPages[3] = {SETTINGS_PLAYER, SETTINGS_APPEARANCE, SETTINGS_CONTROLS};
+	const char *apTitles[3] = {Localize("Player"), Localize("Appearance"), Localize("Controls")};
+	const char *apDescriptions[3] = {Localize("Name and in-game profile"), Localize("Colors and visual style"), Localize("Keyboard and touch controls")};
+	const ColorRGBA aAccents[3] = {ColorRGBA(0.20f, 0.78f, 0.70f, 1.0f), ColorRGBA(0.56f, 0.43f, 0.92f, 1.0f), ColorRGBA(0.98f, 0.66f, 0.30f, 1.0f)};
+
+	auto RenderQuickLink = [&](CUIRect Card, CButtonContainer *pButton, int Page, const char *pTitle, const char *pDescription, const ColorRGBA &AccentColor) {
+		const int Clicked = Ui()->DoButtonLogic(pButton, 0, &Card, BUTTONFLAG_LEFT);
+		const bool Hovered = Ui()->HotItem() == pButton;
+		Card.Draw(Hovered ? ColorRGBA(0.15f, 0.19f, 0.25f, 1.0f) : ColorRGBA(0.11f, 0.13f, 0.18f, 0.94f), IGraphics::CORNER_ALL, 8.0f);
+
+		CUIRect CardAccent, CardContent, CardTitle, CardDescription;
+		Card.VSplitLeft(4.0f, &CardAccent, &CardContent);
+		CardAccent.Draw(AccentColor, IGraphics::CORNER_ALL, 2.0f);
+		CardContent.Margin(10.0f, &CardContent);
+		CardContent.HSplitTop(19.0f, &CardTitle, &CardDescription);
+		TextRender()->TextColor(0.92f, 0.96f, 1.0f, 1.0f);
+		Ui()->DoLabel(&CardTitle, pTitle, 14.0f, TEXTALIGN_ML);
+		TextRender()->TextColor(0.63f, 0.72f, 0.82f, 1.0f);
+		Ui()->DoLabel(&CardDescription, pDescription, 10.0f, TEXTALIGN_ML);
+		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+		if(Clicked)
+			g_Config.m_UiSettingsPage = Page;
+	};
+
+	for(int i = 0; i < 3; i++)
+	{
+		CUIRect Card;
+		MainView.HSplitTop(52.0f, &Card, &MainView);
+		RenderQuickLink(Card, &s_aQuickLinks[i], aPages[i], apTitles[i], apDescriptions[i], aAccents[i]);
+		if(i < 2)
+			MainView.HSplitTop(6.0f, nullptr, &MainView);
+	}
+}
 bool CMenus::RenderHslaScrollbars(CUIRect *pRect, unsigned int *pColor, bool Alpha, float DarkestLight)
 {
 	const unsigned PrevPackedColor = *pColor;
