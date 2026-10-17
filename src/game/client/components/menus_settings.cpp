@@ -52,7 +52,7 @@ void CMenus::RenderSettings(CUIRect MainView)
 		Localize("DDNet"),
 		Localize("Assets"),
 		Localize("Credits"),
-		Localize("wartov")};
+		"wartov"};
 	static CButtonContainer s_aTabButtons[SETTINGS_LENGTH];
 
 	for(int i = 0; i < SETTINGS_LENGTH; i++)
@@ -172,7 +172,7 @@ void CMenus::RenderSettingsWartov(CUIRect MainView)
 	HeaderContent.Margin(14.0f, &HeaderContent);
 	HeaderContent.HSplitTop(26.0f, &Title, &Subtitle);
 	TextRender()->TextColor(0.94f, 0.98f, 1.0f, 1.0f);
-	Ui()->DoLabel(&Title, Localize("wartov"), 22.0f, TEXTALIGN_ML);
+	Ui()->DoLabel(&Title, "wartov", 22.0f, TEXTALIGN_ML);
 	TextRender()->TextColor(0.64f, 0.75f, 0.83f, 1.0f);
 	Ui()->DoLabel(&Subtitle, Localize("A personal space for your DDNet setup"), 11.0f, TEXTALIGN_ML);
 	TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -217,6 +217,7 @@ void CMenus::RenderSettingsWartov(CUIRect MainView)
 			MainView.HSplitTop(6.0f, nullptr, &MainView);
 	}
 }
+
 bool CMenus::RenderHslaScrollbars(CUIRect *pRect, unsigned int *pColor, bool Alpha, float DarkestLight)
 {
 	const unsigned PrevPackedColor = *pColor;
